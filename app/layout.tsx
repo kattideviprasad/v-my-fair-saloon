@@ -5,10 +5,13 @@ import "./hero.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 
+/* Playfair and Inter are only needed below the hero, so they are not preloaded:
+   preloading them made six font files compete with the hero photo (the LCP element) */
 const playfair = Playfair_Display({
   variable: "--font-playfair",
   subsets: ["latin"],
   display: "swap",
+  preload: false,
   weight: ["400", "500", "600", "700"],
   style: ["normal", "italic"],
 });
@@ -17,6 +20,7 @@ const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
   display: "swap",
+  preload: false,
   weight: ["300", "400", "500", "600", "700"],
 });
 
@@ -60,6 +64,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
+      data-scroll-behavior="smooth"
       className={`${playfair.variable} ${inter.variable} ${instrument.variable} ${hanken.variable}`}
     >
       <body>
