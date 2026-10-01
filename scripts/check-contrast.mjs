@@ -11,8 +11,12 @@ const lum = (hex) => {
   const [r, g, b] = [1, 3, 5].map((i) => lin(parseInt(hex.slice(i, i + 2), 16)));
   return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 };
-const ratio = (a, b) => {
-  const [hi, lo] = [lum(t[a]), lum(t[b])].sort((x, y) => y - x);
+// Blend fg over bg at the given opacity (for translucent text), in sRGB
+const blend = (fg, bg, a) =>
+  "#" + [1, 3, 5].map((i) => Math.round(parseInt(fg.slice(i, i + 2), 16) * a + parseInt(bg.slice(i, i + 2), 16) * (1 - a)).toString(16).padStart(2, "0")).join("");
+const ratio = (a, b, alpha = 1) => {
+  const fg = alpha < 1 ? blend(t[a], t[b], alpha) : t[a];
+  const [hi, lo] = [lum(fg), lum(t[b])].sort((x, y) => y - x);
   return (hi + 0.05) / (lo + 0.05);
 };
 // Mix of on-dark over espresso at 9% (the --espresso-raised surface), computed in sRGB
@@ -20,7 +24,7 @@ const mix = (a, b, pct) =>
   "#" + [1, 3, 5].map((i) => Math.round(parseInt(a.slice(i, i + 2), 16) * pct + parseInt(b.slice(i, i + 2), 16) * (1 - pct)).toString(16).padStart(2, "0")).join("");
 t["espresso-raised"] = mix(t["on-dark"], t["espresso"], 0.09);
 
-// [foreground, background, minimum, where it is used]
+// [foreground, background, minimum, where it is used, opacity]
 const pairs = [
   ["text", "ivory", 4.5, "body text on ivory"],
   ["text", "sand", 4.5, "body text on sand"],
@@ -38,11 +42,23 @@ const pairs = [
   ["espresso", "gold", 4.5, "gold buttons: espresso label on gold"],
   ["on-dark", "espresso", 4.5, "primary button label"],
   ["espresso", "on-dark", 4.5, "footer logo pad / inverse hover"],
+
+  // Header + hero (azure wall / navy soffit / amber LED). The hero copy sits on --wall or darker:
+  // the radial glow (--wall-hi) is placed behind the mirrors, not the text. Rendered pixels behind
+  // every line of hero copy are also sampled in the browser audit.
+  ["paper", "soffit", 4.5, "header text on navy soffit"],
+  ["led-hi", "soffit", 4.5, "header hover and current link on navy"],
+  ["soffit", "led", 4.5, "amber buttons: navy label on LED amber"],
+  ["paper", "wall", 4.5, "headline and ghost button on wall"],
+  ["paper", "wall", 4.5, "lede, 94% paper, on wall", 0.94],
+  ["paper", "wall", 4.5, "fact captions, 92% paper, on wall", 0.92],
+  ["led-hi", "wall", 4.5, "tagline on wall"],
+  ["led", "wall", 3, "star icon on wall"],
 ];
 
 let failed = 0;
-for (const [fg, bg, min, use] of pairs) {
-  const r = ratio(fg, bg);
+for (const [fg, bg, min, use, alpha = 1] of pairs) {
+  const r = ratio(fg, bg, alpha);
   const ok = r >= min;
   if (!ok) failed++;
   console.log(`${ok ? "PASS" : "FAIL"}  ${r.toFixed(2).padStart(5)}:1  (min ${min})  ${fg} on ${bg} — ${use}`);

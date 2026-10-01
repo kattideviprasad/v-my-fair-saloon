@@ -18,6 +18,27 @@
   --on-dark: #F5EEE2;
   --on-dark-muted: #CDBFAA;
 
+  /* Header + hero only: the salon's azure wall, navy ceiling soffit and amber cove LED.
+     The LED is #F6B545 rather than the site gold (#C9A227) because a glow needs the lighter,
+     warmer amber seen in the cove lighting in the photos. */
+  --wall: #0F5C93;
+  --wall-hi: #1C78B6;
+  --wall-deep: #093657;
+  --soffit: #071A2D;
+  --led: #F6B545;
+  --led-hi: #FFD98F;
+  --paper: #F2F6F9;
+  --dim: #02101D;
+  --chrome-1: #F6F9FC;
+  --chrome-2: #B8C3D2;
+  --chrome-3: #7E8A9D;
+  --chrome-4: #DDE4EE;
+  --chrome-5: #98A4B6;
+  --font-display-hero: var(--font-instrument), "Times New Roman", serif;
+  --font-body-hero: var(--font-hanken), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --bar-h: 72px;
+  --hero-gutter: clamp(20px, 4vw, 56px);
+
   /* Derived from the tokens above, never new colours */
   --espresso-raised: color-mix(in srgb, var(--on-dark) 9%, var(--espresso));
   --line: color-mix(in srgb, var(--text) 16%, transparent);
@@ -380,30 +401,6 @@
     margin: 0;
     border: none;
     background: var(--rule);
-  }
-
-  /* Hero scrims: espresso over the photo, left → transparent on wide screens,
-     top → transparent on phones */
-  .hero-scrim {
-    background: linear-gradient(
-      to bottom,
-      var(--espresso) 0%,
-      var(--espresso) 62%,
-      transparent 100%
-    );
-  }
-
-  @media (min-width: 1024px) {
-    .hero-scrim {
-      background: linear-gradient(
-        to right,
-        var(--espresso) 0%,
-        var(--espresso) 38%,
-        color-mix(in srgb, var(--espresso) 78%, transparent) 50%,
-        color-mix(in srgb, var(--espresso) 35%, transparent) 64%,
-        transparent 86%
-      );
-    }
   }
 }
 
