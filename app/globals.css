@@ -290,6 +290,12 @@
     transform: translateY(-1px);
   }
 
+  /* Pressed: settles back down and dims a touch */
+  .btn:active {
+    transform: translateY(0) scale(0.98);
+    filter: brightness(0.94);
+  }
+
   .btn-lg {
     min-height: 54px;
     padding: 0.875rem 2rem;
@@ -308,7 +314,8 @@
   }
 
   .btn-amber:hover {
-    background: color-mix(in srgb, var(--amber) 82%, var(--on-dark));
+    background: var(--amber-hi);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--amber) 28%, transparent);
   }
 
   .btn-primary {
@@ -317,7 +324,8 @@
   }
 
   .btn-primary:hover {
-    background: color-mix(in srgb, var(--navy) 82%, var(--amber));
+    background: var(--navy-raised);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--navy) 16%, transparent);
   }
 
   .btn-secondary {
@@ -332,6 +340,12 @@
     border-color: var(--fg);
   }
 
+  /* Keyboard focus: a ring that reads on both light and navy surfaces */
+  .btn:focus-visible {
+    outline: 2px solid var(--accent-icon);
+    outline-offset: 3px;
+  }
+
   /* ─── Cards ─── */
   .card {
     padding: clamp(1.5rem, 1.2rem + 1vw, 2rem);
@@ -342,6 +356,91 @@
 
   .surface-dark .card {
     background: var(--navy-raised);
+  }
+
+  /* A card that is a link: lifts on hover, presses on click, shows a focus ring */
+  .card-link {
+    cursor: pointer;
+    border: 1px solid transparent;
+  }
+
+  .card-link:hover {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--amber) 55%, transparent);
+    box-shadow: 0 14px 30px -14px color-mix(in srgb, var(--navy) 55%, transparent);
+  }
+
+  .card-link:active {
+    transform: translateY(0);
+    box-shadow: none;
+    filter: brightness(0.96);
+  }
+
+  .card-link:focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 3px;
+  }
+
+  /* Text links: underlined at rest, accent on hover, dimmer while pressed */
+  .link {
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+    text-underline-offset: 4px;
+    transition: color var(--duration) var(--ease-out), text-decoration-color var(--duration) var(--ease-out);
+  }
+
+  .link:hover {
+    color: var(--accent-text);
+    text-decoration-color: currentColor;
+  }
+
+  .link:active {
+    opacity: 0.75;
+  }
+
+  /* Quiet links (footer lists, nav-like): no underline until hover */
+  .link-quiet {
+    transition: color var(--duration) var(--ease-out);
+  }
+
+  .link-quiet:hover {
+    color: var(--accent-text);
+    text-decoration: underline;
+    text-decoration-color: currentColor;
+    text-underline-offset: 4px;
+  }
+
+  .link-quiet:active {
+    opacity: 0.75;
+  }
+
+  /* Anchored service sections: leave room for the fixed header */
+  [id^="svc-"] {
+    scroll-margin-top: calc(var(--bar-h) + 24px);
+  }
+
+  /* Plain, non-interactive list (services): small amber marker, no border, no hover */
+  .plain-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .plain-list li {
+    position: relative;
+    padding: 0.4rem 0 0.4rem 1.25rem;
+    cursor: default;
+  }
+
+  .plain-list li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 1.05em;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--amber-deep);
   }
 
   .card-light {
@@ -414,11 +513,16 @@
   }
 
   .btn,
-  .card {
+  .card,
+  .link,
+  .link-quiet {
     transition: none;
   }
 
-  .btn:hover {
+  .btn:hover,
+  .btn:active,
+  .card-link:hover,
+  .card-link:active {
     transform: none;
   }
 }

@@ -104,6 +104,14 @@
     transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
   }
 
+  .sh-link:hover {
+    color: var(--led-hi);
+  }
+
+  .sh-link:active {
+    opacity: 0.75;
+  }
+
   .sh-link:hover::after,
   .sh-link:focus-visible::after,
   .sh-link[aria-current="page"]::after {
@@ -126,7 +134,13 @@
   }
 
   .sh-phone:hover {
-    color: var(--paper);
+    color: var(--led-hi);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .sh-phone:active {
+    opacity: 0.75;
   }
 
   .sh-toggle {
@@ -138,6 +152,15 @@
     margin-right: -8px;
     color: var(--paper);
     border-radius: 8px;
+    transition: background-color 0.2s;
+  }
+
+  .sh-toggle:hover {
+    background: color-mix(in srgb, var(--paper) 12%, transparent);
+  }
+
+  .sh-toggle:active {
+    background: color-mix(in srgb, var(--paper) 20%, transparent);
   }
 
   /* Everywhere except the home hero: a crisp 2px amber line, no glow, nothing bleeding onto cream */
@@ -227,6 +250,14 @@
     min-height: 56px;
     font: 400 1.9rem/1 var(--font-display-hero);
     border-bottom: 1px solid color-mix(in srgb, var(--paper) 14%, transparent);
+  }
+
+  .mobile-link:hover {
+    color: var(--led-hi);
+  }
+
+  .mobile-link:active {
+    background: color-mix(in srgb, var(--paper) 10%, transparent);
   }
 
   .mobile-link[aria-current="page"] {
@@ -383,6 +414,11 @@
   .hbtn-primary {
     background: var(--led);
     color: var(--soffit);
+  }
+
+  .hbtn:active {
+    translate: 0 1px;
+    filter: brightness(0.94);
   }
 
   .hbtn-primary:hover {

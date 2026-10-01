@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ScrollReveal } from "@/components/ScrollReveal";
+import { serviceSlug, serviceBookingHref } from "@/lib/service-slugs";
 import {
   ScissorsIcon,
   BeautyCareIcon,
@@ -85,6 +86,7 @@ const services = [
   {
     icon: PiercingIcon,
     category: "Extras",
+    plainContact: true, // not one of the bookable service categories, so no ?service= param
     items: [
       "Ear piercing",
       "Threading",
@@ -127,7 +129,7 @@ export function ServicesContent() {
             {services.map((svc, index) => (
               <ScrollReveal
                 key={svc.category}
-                id={`svc-${svc.category.toLowerCase().replace(/[^a-z]+/g, "-")}`}
+                id={`svc-${serviceSlug(svc.category)}`}
               >
                 <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-12">
                   {/* Category header */}
@@ -148,22 +150,20 @@ export function ServicesContent() {
 
                   {/* Items */}
                   <div className="lg:col-span-8">
-                    <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    {/* What's included: plain text, nothing here is clickable */}
+                    <ul className="plain-list grid grid-cols-1 gap-x-8 gap-y-1 sm:grid-cols-2">
                       {svc.items.map((item) => (
-                        <li
-                          key={item}
-                          className="flex items-start gap-3 rounded-[var(--radius)] border border-rule p-4 transition-colors duration-200 hover:border-amber-deep hover:bg-sand"
-                        >
-                          <span className="mt-[0.6rem] h-1.5 w-1.5 flex-shrink-0 rounded-full bg-amber-deep" />
-                          <span className="text-small text-ink">{item}</span>
+                        <li key={item} className="text-ink">
+                          {item}
                         </li>
                       ))}
                     </ul>
                     {!svc.note && (
                       <div className="mt-5">
                         <Link
-                          href="/contact"
-                          className="text-small inline-flex items-center gap-1 font-semibold text-accent-text transition-colors hover:text-ink"
+                          href={svc.plainContact ? "/contact" : serviceBookingHref(svc.category)}
+                          className="btn btn-secondary btn-sm"
+                          id={`book-${serviceSlug(svc.category)}`}
                         >
                           Book this service <ChevronRightIcon size={16} />
                         </Link>

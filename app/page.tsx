@@ -20,6 +20,7 @@ import {
 } from "@/components/Icons";
 import { HeroSection } from "@/components/HeroSection";
 import { InstagramCarousel } from "@/components/InstagramCarousel";
+import { serviceAnchor, serviceSlug } from "@/lib/service-slugs";
 
 /* ═══ Service teaser data ═══ */
 const serviceCategories = [
@@ -103,10 +104,10 @@ export default function HomePage() {
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {serviceCategories.map((svc) => (
                 <Link
-                  href="/services"
+                  href={serviceAnchor(svc.title)}
                   key={svc.title}
-                  className="service-card card group flex flex-col"
-                  id={`service-card-${svc.title.toLowerCase().replace(/\s+/g, "-")}`}
+                  className="service-card card card-link group flex flex-col"
+                  id={`service-card-${serviceSlug(svc.title)}`}
                 >
                   <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-full border border-[var(--line-on-dark)] text-accent-icon">
                     <svc.icon size={24} strokeWidth={1.4} />
@@ -228,7 +229,7 @@ export default function HomePage() {
               href="https://instagram.com/vmyfairunisexsalonspa"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-[1.0625rem] font-medium text-ink underline decoration-[var(--line)] underline-offset-4 transition-colors hover:decoration-amber-deep"
+              className="inline-flex items-center gap-2 text-[1.0625rem] font-medium text-ink link"
             >
               <InstagramIcon size={20} />
               @vmyfairunisexsalonspa
@@ -274,7 +275,7 @@ export default function HomePage() {
               </Link>
               <a
                 href="tel:+918247458328"
-                className="inline-flex items-center gap-2 text-[1.0625rem] font-medium text-fg underline decoration-[var(--line-on-dark)] underline-offset-4 transition-colors hover:text-amber hover:decoration-amber"
+                className="inline-flex items-center gap-2 text-[1.0625rem] font-medium text-fg link"
                 id="cta-call-btn"
               >
                 <PhoneIcon size={20} /> Call +91 82474 58328
