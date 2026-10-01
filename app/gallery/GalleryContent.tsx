@@ -78,7 +78,7 @@ export function GalleryContent() {
             <p className="mx-auto mb-9 max-w-md">
               Book your appointment and let us create your next look.
             </p>
-            <Link href="/contact" className="btn btn-gold" id="gallery-book-cta">
+            <Link href="/contact" className="btn btn-amber" id="gallery-book-cta">
               Book Appointment
             </Link>
           </ScrollReveal>

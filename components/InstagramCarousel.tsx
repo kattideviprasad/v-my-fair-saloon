@@ -28,7 +28,7 @@ function FallbackCard({ reel }: { reel: (typeof reels)[0] }) {
       href={reel.url}
       target="_blank"
       rel="noopener noreferrer"
-      className={`${cardSize} card p-0 flex flex-col items-center justify-center gap-4 text-center hover:bg-espresso-raised`}
+      className={`${cardSize} card p-0 flex flex-col items-center justify-center gap-4 text-center hover:bg-navy-raised`}
       aria-label="Watch this reel on Instagram"
     >
       <span className="flex h-14 w-14 items-center justify-center rounded-full border border-[var(--line-on-dark)] text-accent-icon">
@@ -90,14 +90,14 @@ function VideoCard({ reel }: { reel: (typeof reels)[0] }) {
 
   return (
     <div
-      className={`${cardSize} group cursor-pointer bg-espresso`}
+      className={`${cardSize} group cursor-pointer bg-navy`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={handleClick}
     >
       {/* Gold ring on hover / while playing */}
       <div
-        className={`pointer-events-none absolute inset-0 z-[4] rounded-xl border-[3px] border-gold transition-opacity duration-300 ${
+        className={`pointer-events-none absolute inset-0 z-[4] rounded-xl border-[3px] border-amber transition-opacity duration-300 ${
           isHovered || (isPlaying && isTouchDevice) ? "opacity-100" : "opacity-0"
         }`}
       />
@@ -120,7 +120,7 @@ function VideoCard({ reel }: { reel: (typeof reels)[0] }) {
         href={reel.url}
         target="_blank"
         rel="noopener noreferrer"
-        className="absolute bottom-3 right-3 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-espresso/70 text-on-dark transition-colors hover:text-gold"
+        className="absolute bottom-3 right-3 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-navy/70 text-on-dark transition-colors hover:text-amber"
         onClick={(e) => e.stopPropagation()}
         aria-label="View on Instagram"
       >
@@ -141,7 +141,7 @@ export function InstagramCarousel() {
   };
 
   const arrow =
-    "absolute top-1/2 z-20 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-ivory text-ink shadow-[0_2px_12px_color-mix(in_srgb,var(--espresso)_25%,transparent)] transition-colors hover:text-accent-text sm:flex";
+    "absolute top-1/2 z-20 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-ivory text-ink shadow-[0_2px_12px_color-mix(in_srgb,var(--navy)_25%,transparent)] transition-colors hover:text-accent-text sm:flex";
 
   return (
     <div className="relative w-full max-w-full overflow-hidden py-4">

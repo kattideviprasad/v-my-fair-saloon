@@ -2,25 +2,16 @@
 
 /* ─────────────────────────────────────────────────────────────
    Colour tokens — the only place hex values live.
-   Text/background contrast is verified by scripts/check-contrast.mjs.
-   Note: --gold-text on --sand is only 4.2:1, so sand surfaces use
-   neutral small accents (see .surface-sand).
+   One palette: the salon's azure wall, navy ceiling soffit and amber cove LED,
+   on ivory/sand light sections. Text/background contrast is verified by
+   scripts/check-contrast.mjs.
    ───────────────────────────────────────────────────────────── */
 :root {
+  /* Light sections */
   --ivory: #FBF7EE;
   --sand: #F1E9DA;
-  --espresso: #231C18;
-  --gold: #C9A227;
-  --gold-deep: #A47F12;   /* large text / icons on light */
-  --gold-text: #8A6A0B;   /* small text on ivory */
-  --text: #2B2420;
-  --text-muted: #6B6158;
-  --on-dark: #F5EEE2;
-  --on-dark-muted: #CDBFAA;
 
-  /* Header + hero only: the salon's azure wall, navy ceiling soffit and amber cove LED.
-     The LED is #F6B545 rather than the site gold (#C9A227) because a glow needs the lighter,
-     warmer amber seen in the cove lighting in the photos. */
+  /* Hero tokens: the source of the palette */
   --wall: #0F5C93;
   --wall-hi: #1C78B6;
   --wall-deep: #093657;
@@ -39,19 +30,32 @@
   --bar-h: 72px;
   --hero-gutter: clamp(20px, 4vw, 56px);
 
+  /* Site-wide tokens, promoted from the hero tokens */
+  --navy: var(--soffit);                                            /* dark surfaces */
+  --navy-raised: color-mix(in srgb, var(--wall-deep) 60%, var(--soffit)); /* cards on navy */
+  --amber: var(--led);                                              /* the one accent on dark */
+  --amber-hi: var(--led-hi);
+  --on-dark: var(--paper);                                          /* text on navy */
+  --on-dark-muted: #B4C5D6;                                         /* secondary text on navy */
+
+  /* Text and accents on ivory/sand. Bright amber fails on cream, so these are the amber-brown pair */
+  --text: var(--navy);
+  --text-muted: #46586A;
+  --amber-deep: #A56B00;   /* icons, markers, large text (>= 3:1) */
+  --amber-text: #7A5200;   /* small text and links (>= 4.5:1) */
+
   /* Derived from the tokens above, never new colours */
-  --espresso-raised: color-mix(in srgb, var(--on-dark) 9%, var(--espresso));
   --line: color-mix(in srgb, var(--text) 16%, transparent);
   --line-input: color-mix(in srgb, var(--text) 58%, var(--ivory));
-  --line-on-dark: color-mix(in srgb, var(--on-dark) 20%, transparent);
+  --line-on-dark: color-mix(in srgb, var(--on-dark) 18%, transparent);
 
   /* Context tokens: components read these, so a surface decides its own
      text colours and grey-on-dark can't happen by accident. */
   --surface: var(--ivory);
   --fg: var(--text);
   --fg-muted: var(--text-muted);
-  --accent-text: var(--gold-text);
-  --accent-icon: var(--gold-deep);
+  --accent-text: var(--amber-text);
+  --accent-icon: var(--amber-deep);
   --rule: var(--line);
 
   /* Type scale */
@@ -73,11 +77,12 @@
 @theme inline {
   --color-ivory: var(--ivory);
   --color-sand: var(--sand);
-  --color-espresso: var(--espresso);
-  --color-espresso-raised: var(--espresso-raised);
-  --color-gold: var(--gold);
-  --color-gold-deep: var(--gold-deep);
-  --color-gold-text: var(--gold-text);
+  --color-navy: var(--navy);
+  --color-navy-raised: var(--navy-raised);
+  --color-amber: var(--amber);
+  --color-amber-hi: var(--amber-hi);
+  --color-amber-deep: var(--amber-deep);
+  --color-amber-text: var(--amber-text);
   --color-ink: var(--text);
   --color-muted: var(--text-muted);
   --color-on-dark: var(--on-dark);
@@ -121,8 +126,8 @@
   }
 
   ::selection {
-    background: var(--gold);
-    color: var(--espresso);
+    background: var(--amber);
+    color: var(--navy);
   }
 
   img {
@@ -188,24 +193,23 @@
 
   .surface-sand {
     --surface: var(--sand);
-    --accent-text: var(--text);   /* gold-text is 4.2:1 on sand, so small accents go neutral */
     background: var(--sand);
   }
 
   .surface-dark,
   .card {
-    --surface: var(--espresso);
+    --surface: var(--navy);
     --fg: var(--on-dark);
     --fg-muted: var(--on-dark-muted);
-    --accent-text: var(--gold);
-    --accent-icon: var(--gold);
+    --accent-text: var(--amber);
+    --accent-icon: var(--amber);
     --rule: var(--line-on-dark);
-    background: var(--espresso);
+    background: var(--navy);
     color: var(--fg);
   }
 
   .surface-raised {
-    background: var(--espresso-raised);
+    background: var(--navy-raised);
   }
 
   /* ─── Layout ─── */
@@ -297,23 +301,23 @@
     font-size: var(--fs-small);
   }
 
-  /* Gold buttons always carry espresso text */
-  .btn-gold {
-    background: var(--gold);
-    color: var(--espresso);
+  /* Amber buttons always carry navy text */
+  .btn-amber {
+    background: var(--amber);
+    color: var(--navy);
   }
 
-  .btn-gold:hover {
-    background: color-mix(in srgb, var(--gold) 82%, var(--on-dark));
+  .btn-amber:hover {
+    background: color-mix(in srgb, var(--amber) 82%, var(--on-dark));
   }
 
   .btn-primary {
-    background: var(--espresso);
+    background: var(--navy);
     color: var(--on-dark);
   }
 
   .btn-primary:hover {
-    background: color-mix(in srgb, var(--espresso) 82%, var(--gold));
+    background: color-mix(in srgb, var(--navy) 82%, var(--amber));
   }
 
   .btn-secondary {
@@ -337,7 +341,7 @@
   }
 
   .surface-dark .card {
-    background: var(--espresso-raised);
+    background: var(--navy-raised);
   }
 
   .card-light {
@@ -364,8 +368,8 @@
 
   .input:focus {
     outline: none;
-    border-color: var(--gold-deep);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--gold) 35%, transparent);
+    border-color: var(--amber-deep);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--amber) 35%, transparent);
   }
 
   .input::placeholder {

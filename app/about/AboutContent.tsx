@@ -169,7 +169,7 @@ export function AboutContent() {
                     <div className="absolute left-[23px] top-6 bottom-0 w-px bg-rule" />
                   )}
                   <div className="flex w-[48px] flex-shrink-0 justify-center">
-                    <div className={`mt-2 h-3 w-3 rounded-full ${ms.year === "Today" ? "bg-gold-deep" : "bg-ink"}`} />
+                    <div className={`mt-2 h-3 w-3 rounded-full ${ms.year === "Today" ? "bg-amber-deep" : "bg-ink"}`} />
                   </div>
                   <div>
                     <span className="mb-1 block font-serif text-[1.375rem] font-semibold leading-tight text-ink">
@@ -193,7 +193,7 @@ export function AboutContent() {
               Whether it&apos;s your first visit or your fiftieth — we&apos;re glad you&apos;re here.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <Link href="/contact" className="btn btn-gold" id="about-book-cta">
+              <Link href="/contact" className="btn btn-amber" id="about-book-cta">
                 Book Appointment
               </Link>
               <Link href="/services" className="btn btn-secondary">

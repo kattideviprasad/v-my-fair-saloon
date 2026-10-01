@@ -20,7 +20,7 @@ const services = [
 ];
 
 const footerLink =
-  "text-small text-fg-muted hover:text-gold transition-colors duration-200";
+  "text-small text-fg-muted hover:text-amber transition-colors duration-200";
 
 export function Footer() {
   return (
@@ -124,14 +124,14 @@ export function Footer() {
               href="https://instagram.com/vmyfairunisexsalonspa"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex h-11 w-11 items-center justify-center rounded-full text-fg-muted transition-colors hover:text-gold"
+              className="flex h-11 w-11 items-center justify-center rounded-full text-fg-muted transition-colors hover:text-amber"
               aria-label="Instagram"
             >
               <InstagramIcon size={20} />
             </a>
             <a
               href="tel:+918247458328"
-              className="flex h-11 w-11 items-center justify-center rounded-full text-fg-muted transition-colors hover:text-gold"
+              className="flex h-11 w-11 items-center justify-center rounded-full text-fg-muted transition-colors hover:text-amber"
               aria-label="Phone"
             >
               <PhoneIcon size={20} />

@@ -139,7 +139,7 @@ export function ServicesContent() {
                       <h2 className="mb-3 text-[clamp(1.5rem,1.2rem+1vw,2rem)]">{svc.category}</h2>
                       {svc.note && <p className="text-small mb-4 max-w-[34ch]">{svc.note}</p>}
                       {svc.ctaLabel && svc.ctaHref && (
-                        <Link href={svc.ctaHref} className="btn btn-gold btn-sm">
+                        <Link href={svc.ctaHref} className="btn btn-amber btn-sm">
                           {svc.ctaLabel}
                         </Link>
                       )}
@@ -152,9 +152,9 @@ export function ServicesContent() {
                       {svc.items.map((item) => (
                         <li
                           key={item}
-                          className="flex items-start gap-3 rounded-[var(--radius)] border border-rule p-4 transition-colors duration-200 hover:border-gold-deep hover:bg-sand"
+                          className="flex items-start gap-3 rounded-[var(--radius)] border border-rule p-4 transition-colors duration-200 hover:border-amber-deep hover:bg-sand"
                         >
-                          <span className="mt-[0.6rem] h-1.5 w-1.5 flex-shrink-0 rounded-full bg-gold-deep" />
+                          <span className="mt-[0.6rem] h-1.5 w-1.5 flex-shrink-0 rounded-full bg-amber-deep" />
                           <span className="text-small text-ink">{item}</span>
                         </li>
                       ))}
@@ -187,7 +187,7 @@ export function ServicesContent() {
             <p className="mx-auto mb-9 max-w-md">
               Send us a message and our team will recommend the right service for you.
             </p>
-            <Link href="/contact" className="btn btn-gold" id="services-book-cta">
+            <Link href="/contact" className="btn btn-amber" id="services-book-cta">
               Get in Touch
             </Link>
           </ScrollReveal>

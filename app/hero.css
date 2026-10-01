@@ -140,12 +140,20 @@
     border-radius: 8px;
   }
 
+  /* Everywhere except the home hero: a crisp 2px amber line, no glow, nothing bleeding onto cream */
   .site-led {
     position: absolute;
     inset-inline: 0;
+    bottom: -2px;
+    height: 2px;
+    pointer-events: none;
+    background: var(--led);
+  }
+
+  /* Home only: the cove LED, glowing over the blue wall */
+  .site-header.is-home .site-led {
     bottom: -3px;
     height: 3px;
-    pointer-events: none;
     background: linear-gradient(
       90deg,
       transparent,
@@ -465,7 +473,7 @@
       var(--chrome-5) 100%
     );
     box-shadow:
-      inset 0 0 0 1px color-mix(in srgb, white 55%, transparent),
+      inset 0 0 0 1px color-mix(in srgb, var(--chrome-1) 55%, transparent),
       0 34px 48px -22px color-mix(in srgb, var(--dim) 70%, transparent),
       0 10px 20px -10px color-mix(in srgb, var(--dim) 55%, transparent);
   }
@@ -511,7 +519,7 @@
     background: linear-gradient(
       90deg,
       transparent,
-      color-mix(in srgb, white 34%, transparent),
+      color-mix(in srgb, var(--chrome-1) 34%, transparent),
       transparent
     );
   }

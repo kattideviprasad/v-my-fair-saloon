@@ -19,7 +19,7 @@ function ContactTabs() {
 
   const tabClass = (active: boolean) =>
     `flex-1 min-h-[46px] rounded-[var(--radius-pill)] px-4 py-2.5 text-small font-semibold transition-colors duration-200 ${
-      active ? "bg-espresso text-on-dark" : "text-muted hover:text-ink"
+      active ? "bg-navy text-on-dark" : "text-muted hover:text-ink"
     }`;
 
   return (

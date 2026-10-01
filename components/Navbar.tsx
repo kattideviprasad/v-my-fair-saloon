@@ -77,7 +77,7 @@ export function Navbar() {
 
   return (
     <>
-      <header className="site-header" id="site-header">
+      <header className={`site-header${pathname === "/" ? " is-home" : ""}`} id="site-header">
         <div className="sh-bar">
           <Link href="/" className="sh-brand" id="nav-logo" aria-label="V My Fair Unisex Salon & Academy, home">
             <span className="sh-logo-plate">
