@@ -1,10 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { serviceSlug } from "@/lib/service-slugs";
 
 interface ContactFormProps {
   variant?: "booking" | "training";
   className?: string;
+  /** Slug from ?service=<slug>, e.g. "nails". Only sets the dropdown's starting value; unknown slugs are ignored. */
+  defaultService?: string;
 }
 
 const serviceOptions = [
@@ -25,12 +28,16 @@ const trainingOptions = [
   "General Enquiry",
 ];
 
-export function ContactForm({ variant = "booking", className = "" }: ContactFormProps) {
+export function ContactForm({ variant = "booking", className = "", defaultService }: ContactFormProps) {
   const isTraining = variant === "training";
+  const preselected =
+    !isTraining && defaultService
+      ? serviceOptions.filter((o) => o !== "Other").find((o) => serviceSlug(o) === defaultService) ?? ""
+      : "";
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
-    interest: "",
+    interest: preselected,
     date: "",
     message: "",
   });

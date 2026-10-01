@@ -1,0 +1,592 @@
+/* ═════════════════════════════════════════════════════════════
+   Header (navy soffit + LED) and hero (azure wall + chrome mirrors).
+   Tokens live in globals.css (--wall, --wall-hi, --wall-deep, --soffit, --led …).
+   The resting CSS here is the FINISHED state. Nothing is hidden with CSS:
+   the intro in components/HeroSection.tsx sets its start states with GSAP,
+   so everything stays visible if JS or GSAP fails.
+   ═════════════════════════════════════════════════════════════ */
+@layer components {
+  /* ---------- Header ---------- */
+  .site-header {
+    position: fixed;
+    inset-inline: 0;
+    top: 0;
+    z-index: 50;
+    height: var(--bar-h);
+    background: var(--soffit);
+    color: var(--paper);
+    font-family: var(--font-body-hero);
+  }
+
+  .site-header :focus-visible,
+  .mobile-panel :focus-visible,
+  .hero-v2 :focus-visible {
+    outline: 2px solid var(--led-hi);
+    outline-offset: 3px;
+  }
+
+  .sh-bar {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    width: 100%;
+    max-width: 1320px;
+    margin-inline: auto;
+    padding-inline: var(--hero-gutter);
+  }
+
+  .sh-brand {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 12px;
+    min-height: 44px;
+  }
+
+  /* The logo artwork is dark, so it sits on a light plate against the navy */
+  .sh-logo-plate {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 52px;
+    padding: 4px 7px;
+    background: var(--paper);
+    border-radius: 9px;
+  }
+
+  .sh-logo-plate img {
+    height: 44px;
+    width: auto;
+  }
+
+  .sh-wordmark {
+    display: none;
+    flex-direction: column;
+    line-height: 1;
+  }
+
+  .sh-wordmark b {
+    font: 400 1.7rem/1 var(--font-display-hero);
+    letter-spacing: -0.01em;
+  }
+
+  .sh-wordmark span {
+    margin-top: 4px;
+    font-size: 0.75rem;
+    color: color-mix(in srgb, var(--paper) 72%, transparent);
+  }
+
+  .sh-links {
+    display: none;
+    gap: clamp(14px, 2vw, 34px);
+  }
+
+  .sh-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+
+  .sh-link::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    bottom: 6px;
+    height: 1px;
+    background: var(--led);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  .sh-link:hover {
+    color: var(--led-hi);
+  }
+
+  .sh-link:active {
+    opacity: 0.75;
+  }
+
+  .sh-link:hover::after,
+  .sh-link:focus-visible::after,
+  .sh-link[aria-current="page"]::after {
+    transform: scaleX(1);
+  }
+
+  .sh-end {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .sh-phone {
+    display: none;
+    align-items: center;
+    min-height: 44px;
+    font-size: 0.95rem;
+    white-space: nowrap;
+    color: color-mix(in srgb, var(--paper) 88%, transparent);
+  }
+
+  .sh-phone:hover {
+    color: var(--led-hi);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .sh-phone:active {
+    opacity: 0.75;
+  }
+
+  .sh-toggle {
+    display: inline-flex;
+    width: 44px;
+    height: 44px;
+    align-items: center;
+    justify-content: center;
+    margin-right: -8px;
+    color: var(--paper);
+    border-radius: 8px;
+    transition: background-color 0.2s;
+  }
+
+  .sh-toggle:hover {
+    background: color-mix(in srgb, var(--paper) 12%, transparent);
+  }
+
+  .sh-toggle:active {
+    background: color-mix(in srgb, var(--paper) 20%, transparent);
+  }
+
+  /* Everywhere except the home hero: a crisp 2px amber line, no glow, nothing bleeding onto cream */
+  .site-led {
+    position: absolute;
+    inset-inline: 0;
+    bottom: -2px;
+    height: 2px;
+    pointer-events: none;
+    background: var(--led);
+  }
+
+  /* Home only: the cove LED, glowing over the blue wall */
+  .site-header.is-home .site-led {
+    bottom: -3px;
+    height: 3px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--led) 10%,
+      var(--led-hi) 50%,
+      var(--led) 90%,
+      transparent
+    );
+    box-shadow:
+      0 0 22px 4px color-mix(in srgb, var(--led) 55%, transparent),
+      0 0 90px 18px color-mix(in srgb, var(--led) 22%, transparent);
+  }
+
+  @media (min-width: 640px) {
+    .sh-phone {
+      display: inline-flex;
+    }
+  }
+
+  @media (min-width: 980px) {
+    .sh-links {
+      display: flex;
+    }
+
+    .sh-toggle {
+      display: none;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .sh-wordmark {
+      display: flex;
+    }
+  }
+
+  /* Mobile menu */
+  .mobile-overlay {
+    position: fixed;
+    inset: var(--bar-h) 0 0 0;
+    z-index: 40;
+    background: color-mix(in srgb, var(--dim) 62%, transparent);
+  }
+
+  .mobile-panel {
+    position: fixed;
+    inset: var(--bar-h) 0 auto 0;
+    z-index: 45;
+    max-height: calc(100svh - var(--bar-h));
+    overflow-y: auto;
+    padding: 8px var(--hero-gutter) 28px;
+    background: var(--soffit);
+    color: var(--paper);
+    font-family: var(--font-body-hero);
+    border-top: 1px solid color-mix(in srgb, var(--paper) 14%, transparent);
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-8px);
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s linear 0.2s;
+  }
+
+  .mobile-panel[data-open="true"] {
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+    transition-delay: 0s;
+  }
+
+  .mobile-link {
+    display: flex;
+    align-items: center;
+    min-height: 56px;
+    font: 400 1.9rem/1 var(--font-display-hero);
+    border-bottom: 1px solid color-mix(in srgb, var(--paper) 14%, transparent);
+  }
+
+  .mobile-link:hover {
+    color: var(--led-hi);
+  }
+
+  .mobile-link:active {
+    background: color-mix(in srgb, var(--paper) 10%, transparent);
+  }
+
+  .mobile-link[aria-current="page"] {
+    color: var(--led-hi);
+  }
+
+  .mobile-phone {
+    display: flex;
+    align-items: center;
+    min-height: 56px;
+    margin-top: 12px;
+    font-size: 1.1rem;
+    color: color-mix(in srgb, var(--paper) 88%, transparent);
+  }
+
+  @media (min-width: 980px) {
+    .mobile-panel,
+    .mobile-overlay {
+      display: none;
+    }
+  }
+
+  /* ---------- Hero ---------- */
+  .hero-v2 {
+    position: relative;
+    isolation: isolate;
+    overflow: clip;
+    min-height: min(100svh, 980px);
+    display: flex;
+    align-items: center;
+    color: var(--paper);
+    font-family: var(--font-body-hero);
+    padding-top: calc(var(--bar-h) + clamp(28px, 6vw, 92px));
+    padding-bottom: clamp(48px, 7vw, 112px);
+    /* Stacked layout: the glow sits behind the photos at the bottom, so the copy above it
+       rests on the deeper wall tones */
+    background: radial-gradient(130% 55% at 70% 84%, var(--wall-hi) 0%, var(--wall) 46%, var(--wall-deep) 100%);
+  }
+
+  @media (min-width: 980px) {
+    .hero-v2 {
+      background: radial-gradient(90% 80% at 72% 38%, var(--wall-hi) 0%, var(--wall) 46%, var(--wall-deep) 100%);
+    }
+  }
+
+  .hero-v2::after {
+    /* painted-wall grain */
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.1;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+
+  .hero-spill {
+    /* light cast down the wall by the LED line */
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    z-index: 0;
+    height: min(75%, 600px);
+    pointer-events: none;
+    mix-blend-mode: screen;
+    background: radial-gradient(
+      60% 100% at 50% 0%,
+      color-mix(in srgb, var(--led) 30%, transparent),
+      transparent 72%
+    );
+  }
+
+  /* Resting opacity is 0 and it never takes clicks: the intro raises it, then clears it */
+  .hero-dim {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    opacity: 0;
+    pointer-events: none;
+    background: var(--dim);
+  }
+
+  .hero-wrap {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 1320px;
+    margin-inline: auto;
+    padding-inline: var(--hero-gutter);
+  }
+
+  .hero-grid {
+    display: grid;
+    align-items: center;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(28px, 4vw, 64px);
+  }
+
+  .hero-title-v2 {
+    margin: 0;
+    color: var(--paper);
+    font: 400 clamp(3.5rem, 9.4vw, 9.5rem) / 0.93 var(--font-display-hero);
+    letter-spacing: -0.025em;
+    text-wrap: initial;
+  }
+
+  /* SplitText line masks: keep descenders from being clipped without moving layout */
+  .hero-line-mask {
+    padding-bottom: 0.08em;
+    margin-bottom: -0.08em;
+  }
+
+  .hero-tag {
+    margin: clamp(10px, 1.6vw, 22px) 0 0;
+    font: italic 400 clamp(1.6rem, 2.7vw, 2.5rem) / 1.1 var(--font-display-hero);
+    color: var(--led-hi);
+  }
+
+  .hero-lede {
+    max-width: 34rem;
+    margin: 16px 0 0;
+    font-size: clamp(1.0625rem, 1rem + 0.2vw, 1.125rem);
+    line-height: 1.55;
+    color: color-mix(in srgb, var(--paper) 94%, transparent);
+  }
+
+  .hero-cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 24px;
+  }
+
+  .hbtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 52px;
+    padding: 0 22px;
+    border: 1.5px solid transparent;
+    border-radius: 999px;
+    white-space: nowrap;
+    font: 600 1rem/1 var(--font-body-hero);
+    transition: background-color 0.25s, box-shadow 0.25s, translate 0.25s, border-color 0.25s;
+  }
+
+  .hbtn-sm {
+    min-height: 44px;
+    padding: 0 18px;
+    font-size: 0.9rem;
+  }
+
+  .hbtn-primary {
+    background: var(--led);
+    color: var(--soffit);
+  }
+
+  .hbtn:active {
+    translate: 0 1px;
+    filter: brightness(0.94);
+  }
+
+  .hbtn-primary:hover {
+    background: var(--led-hi);
+    box-shadow: 0 0 0 5px color-mix(in srgb, var(--led) 28%, transparent);
+    translate: 0 -1px;
+  }
+
+  .hbtn-ghost {
+    color: var(--paper);
+    border-color: color-mix(in srgb, var(--paper) 60%, transparent);
+  }
+
+  .hbtn-ghost:hover {
+    background: color-mix(in srgb, var(--paper) 12%, transparent);
+    border-color: var(--paper);
+  }
+
+  .hero-facts {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin: clamp(26px, 4vw, 52px) 0 0;
+  }
+
+  .hero-facts > div {
+    min-width: 0;
+  }
+
+  .hero-facts > div + div {
+    padding-left: 12px;
+    border-left: 1px solid color-mix(in srgb, var(--paper) 30%, transparent);
+  }
+
+  .hero-facts dt {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font: 400 clamp(1.35rem, 2.2vw, 2.1rem) / 1.05 var(--font-display-hero);
+  }
+
+  .hero-facts dd {
+    margin: 5px 0 0;
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    color: color-mix(in srgb, var(--paper) 92%, transparent);
+  }
+
+  .hero-star {
+    flex: none;
+    color: var(--led);
+  }
+
+  /* Mirrors */
+  .hero-stage {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    aspect-ratio: 1 / 1;
+  }
+
+  .hero-layer {
+    position: absolute;
+  }
+
+  .layer-a {
+    top: 0;
+    left: 0;
+    width: 60%;
+  }
+
+  .layer-b {
+    right: 0;
+    bottom: 0;
+    width: 62%;
+  }
+
+  .hero-mirror {
+    display: grid;
+    margin: 0;
+    padding: 7px;
+    border-radius: 7px;
+    background: linear-gradient(
+      135deg,
+      var(--chrome-1) 0%,
+      var(--chrome-2) 26%,
+      var(--chrome-3) 50%,
+      var(--chrome-4) 74%,
+      var(--chrome-5) 100%
+    );
+    box-shadow:
+      inset 0 0 0 1px color-mix(in srgb, var(--chrome-1) 55%, transparent),
+      0 34px 48px -22px color-mix(in srgb, var(--dim) 70%, transparent),
+      0 10px 20px -10px color-mix(in srgb, var(--dim) 55%, transparent);
+  }
+
+  .hero-mirror-a {
+    aspect-ratio: 4 / 5;
+  }
+
+  .hero-mirror-b {
+    aspect-ratio: 4 / 3;
+  }
+
+  .hero-glass {
+    position: relative;
+    overflow: hidden;
+    border-radius: 3px;
+    background: var(--soffit);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--soffit) 70%, transparent);
+  }
+
+  .hero-glass img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .hero-gloss {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  /* Rests off-glass to the left; GSAP sweeps it across */
+  .hero-glint {
+    position: absolute;
+    top: -10%;
+    bottom: -10%;
+    left: -55%;
+    width: 45%;
+    transform: skewX(-16deg);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in srgb, var(--chrome-1) 34%, transparent),
+      transparent
+    );
+  }
+
+  @media (min-width: 980px) {
+    .hero-grid {
+      grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    }
+
+    .hero-title-v2 {
+      font-size: clamp(5rem, 9.4vw, 9.5rem);
+    }
+
+    .hero-cta {
+      margin-top: 32px;
+    }
+
+    .hero-lede {
+      margin-top: 20px;
+    }
+
+    .hero-facts > div + div {
+      padding-left: 20px;
+    }
+
+    .hero-facts dd {
+      font-size: 0.875rem;
+    }
+
+    .hbtn {
+      padding: 0 30px;
+    }
+  }
+}

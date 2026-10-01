@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { PhoneIcon, ClockIcon, MapPinIcon, InstagramIcon } from "./Icons";
+import { serviceAnchor } from "@/lib/service-slugs";
 
 const quickLinks = [
   { label: "Home", href: "/" },
@@ -19,8 +20,9 @@ const services = [
   "Spa & Wellness",
 ];
 
-const footerLink =
-  "text-small text-fg-muted hover:text-gold transition-colors duration-200";
+const footerLink = "text-small text-fg-muted link-quiet inline-flex min-h-[28px] items-center";
+const iconLink =
+  "flex h-11 w-11 items-center justify-center rounded-full text-fg-muted transition-colors hover:bg-[var(--line-on-dark)] hover:text-amber active:opacity-75";
 
 export function Footer() {
   return (
@@ -67,7 +69,7 @@ export function Footer() {
             <ul className="space-y-3">
               {services.map((service) => (
                 <li key={service}>
-                  <Link href="/services" className={footerLink}>
+                  <Link href={serviceAnchor(service)} className={footerLink}>
                     {service}
                   </Link>
                 </li>
@@ -124,14 +126,14 @@ export function Footer() {
               href="https://instagram.com/vmyfairunisexsalonspa"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex h-11 w-11 items-center justify-center rounded-full text-fg-muted transition-colors hover:text-gold"
+              className={iconLink}
               aria-label="Instagram"
             >
               <InstagramIcon size={20} />
             </a>
             <a
               href="tel:+918247458328"
-              className="flex h-11 w-11 items-center justify-center rounded-full text-fg-muted transition-colors hover:text-gold"
+              className={iconLink}
               aria-label="Phone"
             >
               <PhoneIcon size={20} />

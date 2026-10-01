@@ -15,11 +15,12 @@ import {
 function ContactTabs() {
   const searchParams = useSearchParams();
   const initialTab = searchParams.get("tab") === "training" ? "training" : "booking";
+  const serviceParam = searchParams.get("service") ?? undefined;
   const [activeTab, setActiveTab] = useState<"booking" | "training">(initialTab);
 
   const tabClass = (active: boolean) =>
     `flex-1 min-h-[46px] rounded-[var(--radius-pill)] px-4 py-2.5 text-small font-semibold transition-colors duration-200 ${
-      active ? "bg-espresso text-on-dark" : "text-muted hover:text-ink"
+      active ? "bg-navy text-on-dark" : "text-muted hover:bg-ivory hover:text-ink active:opacity-75"
     }`;
 
   return (
@@ -48,7 +49,7 @@ function ContactTabs() {
 
       {/* Form */}
       {activeTab === "booking" ? (
-        <ContactForm variant="booking" />
+        <ContactForm variant="booking" defaultService={serviceParam} />
       ) : (
         <ContactForm variant="training" />
       )}
@@ -124,7 +125,7 @@ export function ContactContent() {
                     <h3 className="mb-1 text-[1.25rem]">Phone</h3>
                     <a
                       href="tel:+918247458328"
-                      className="text-small text-muted underline decoration-[var(--line)] underline-offset-4 transition-colors hover:text-accent-text"
+                      className="text-small text-muted link"
                     >
                       +91 82474 58328
                     </a>
@@ -153,7 +154,7 @@ export function ContactContent() {
                       href="https://instagram.com/vmyfairunisexsalonspa"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-small text-muted underline decoration-[var(--line)] underline-offset-4 transition-colors hover:text-accent-text"
+                      className="text-small text-muted link"
                     >
                       @vmyfairunisexsalonspa
                     </a>

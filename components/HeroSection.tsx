@@ -1,82 +1,299 @@
+"use client";
+
+import { useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import {
-  ScissorsIcon,
-  HairTreatmentIcon,
-  GroomingIcon,
-  BeautyCareIcon,
-  PlayIcon,
-} from "./Icons";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { SplitText } from "gsap/SplitText";
+import { entryPath } from "@/lib/session-entry";
 
-const heroIcons = [
-  { Icon: ScissorsIcon, label: "Haircuts" },
-  { Icon: HairTreatmentIcon, label: "Hair Treatments" },
-  { Icon: GroomingIcon, label: "Grooming" },
-  { Icon: BeautyCareIcon, label: "Beauty Care" },
-];
+// Registered once, at module level
+gsap.registerPlugin(useGSAP, ScrollTrigger, SplitText);
+
+const INTRO_KEY = "vmf-hero-intro-played";
+
+/** Play only when the visitor landed on "/", and only once per browser session. */
+function shouldPlayIntro(): boolean {
+  if (entryPath !== "/") return false; // arrived on another page and clicked Home: no intro
+  try {
+    if (sessionStorage.getItem(INTRO_KEY)) return false;
+  } catch {
+    /* storage blocked: fall through and play */
+  }
+  return true;
+}
+
+function markIntroPlayed() {
+  try {
+    sessionStorage.setItem(INTRO_KEY, "1");
+  } catch {
+    /* ignore */
+  }
+}
 
 export function HeroSection() {
+  const root = useRef<HTMLElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+
+  useGSAP(
+    (_context, contextSafe) => {
+      const el = root.current;
+      const title = titleRef.current;
+      if (!el || !title || !contextSafe) return;
+
+      const q = gsap.utils.selector(el);
+      const led = document.querySelector<HTMLElement>("[data-site-led]");
+      const mm = gsap.matchMedia();
+
+      // Positions depend on fonts and images: re-measure once they are in
+      const refresh = () => ScrollTrigger.refresh();
+      document.fonts?.ready.then(refresh);
+      window.addEventListener("load", refresh);
+
+      /* ── Everything that moves, only when motion is welcome ── */
+      mm.add("(prefers-reduced-motion: no-preference)", (_ctx, safe) => {
+        if (!safe) return; // contextSafe is always passed by matchMedia; narrows the type
+
+        // Gentle scroll drift: the mirrors move at different speeds as the hero scrolls away
+        const drift = { trigger: el, start: "top top", end: "bottom top", scrub: true };
+        gsap.to(q(".layer-a"), { y: -32, ease: "none", scrollTrigger: drift });
+        gsap.to(q(".layer-b"), { y: -80, ease: "none", scrollTrigger: drift });
+
+        // Glint: a soft highlight sweeping across the glass
+        const sweep = (mirror: Element) => {
+          const glint = mirror.querySelector(".hero-glint");
+          if (!glint || gsap.getTweensOf(glint).some((t) => t.isActive())) return;
+          gsap.fromTo(
+            glint,
+            { xPercent: 0 },
+            { xPercent: 380, duration: 1.5, ease: "power2.inOut" }
+          );
+        };
+
+        const mirrors = q(".hero-mirror");
+        const onEnter = safe((e: Event) => sweep(e.currentTarget as Element)) as EventListener;
+        mirrors.forEach((m) => m.addEventListener("pointerenter", onEnter));
+
+        /* ── The lights-on intro ── */
+        if (shouldPlayIntro()) {
+          const dim = q(".hero-dim");
+          const spill = q(".hero-spill");
+          const copy = q(".hero-tag, .hero-lede");
+          const buttons = q(".hero-cta .hbtn");
+          const facts = q(".hero-facts > div");
+          const frames = q(".hero-mirror");
+          const photos = q(".hero-glass img");
+          const glints = q(".hero-glint");
+
+          gsap.set(dim, { autoAlpha: 0.94 });
+          gsap.set(spill, { autoAlpha: 0 });
+          if (led) gsap.set(led, { scaleX: 0, transformOrigin: "50% 50%" });
+          gsap.set([...copy, ...buttons, ...facts], { autoAlpha: 0, y: 16 });
+          gsap.set(frames, { autoAlpha: 0, y: 56 });
+          gsap.set(photos, { scale: 1.12 });
+          gsap.set(glints, { skewX: -16 });
+          gsap.set(title, { autoAlpha: 0 }); // revealed by the split below
+
+          // Headline: each line rises out of its own mask. autoSplit re-splits after
+          // fonts load or a resize; returning the tween keeps it in sync when that happens.
+          SplitText.create(title, {
+            type: "lines",
+            mask: "lines",
+            linesClass: "hero-line",
+            autoSplit: true,
+            onSplit(self) {
+              gsap.set(title, { autoAlpha: 1 });
+              return gsap.from(self.lines, {
+                yPercent: 115,
+                duration: 0.95,
+                stagger: 0.09,
+                ease: "power3.out",
+                delay: 0.5,
+              });
+            },
+          });
+
+          const settle = () => {
+            gsap.set([title, ...copy, ...buttons, ...facts, ...frames, ...spill, ...dim], {
+              clearProps: "opacity,visibility,transform",
+            });
+            gsap.set(photos, { clearProps: "transform" });
+            if (led) gsap.set(led, { clearProps: "transform" });
+            markIntroPlayed();
+          };
+
+          // Failsafe: whatever happens, the finished state is on screen after 5s
+          const failsafe = gsap.delayedCall(5, settle);
+
+          gsap
+            .timeline({
+              defaults: { ease: "power3.out" },
+              onComplete: () => {
+                failsafe.kill();
+                settle();
+              },
+            })
+            .to(led ?? {}, { scaleX: 1, duration: 0.7, ease: "power2.inOut" }, 0)
+            .to(spill, { autoAlpha: 1, duration: 0.9, ease: "power1.out" }, 0.3)
+            .to(dim, { autoAlpha: 0, duration: 1, ease: "power1.inOut" }, 0.1)
+            .to(copy, { autoAlpha: 1, y: 0, duration: 0.6, stagger: 0.08 }, 0.95)
+            .to(buttons, { autoAlpha: 1, y: 0, duration: 0.5, stagger: 0.07 }, 1.15)
+            .to(facts, { autoAlpha: 1, y: 0, duration: 0.5, stagger: 0.07 }, 1.3)
+            // The mirrors hold the page's largest image, so they start rising early (under the
+            // dimmed overlay) to keep Largest Contentful Paint fast
+            .to(frames, { autoAlpha: 1, y: 0, duration: 1, stagger: 0.14 }, 0.15)
+            .to(photos, { scale: 1, duration: 1.8, ease: "power2.out", stagger: 0.14 }, 0.15)
+            .add(() => mirrors.forEach((m, i) => gsap.delayedCall(i * 0.3, () => sweep(m))), 1.7);
+        }
+
+        return () => {
+          mirrors.forEach((m) => m.removeEventListener("pointerenter", onEnter));
+        };
+      });
+
+      /* ── Pointer parallax: mouse and trackpad only ── */
+      mm.add(
+        "(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)",
+        (_ctx, safe) => {
+          if (!safe) return;
+          const opts = { duration: 0.9, ease: "power3.out" };
+          const a = q(".pw-a")[0];
+          const b = q(".pw-b")[0];
+          const ax = gsap.quickTo(a, "x", opts);
+          const ay = gsap.quickTo(a, "y", opts);
+          const bx = gsap.quickTo(b, "x", opts);
+          const by = gsap.quickTo(b, "y", opts);
+
+          const onMove = safe((e: PointerEvent) => {
+            const r = el.getBoundingClientRect();
+            const nx = (e.clientX - r.left) / r.width - 0.5;
+            const ny = (e.clientY - r.top) / r.height - 0.5;
+            ax(nx * -14);
+            ay(ny * -10);
+            bx(nx * -26);
+            by(ny * -18);
+          }) as (e: PointerEvent) => void;
+          const onLeave = safe(() => {
+            ax(0);
+            ay(0);
+            bx(0);
+            by(0);
+          }) as () => void;
+
+          el.addEventListener("pointermove", onMove, { passive: true });
+          el.addEventListener("pointerleave", onLeave);
+          return () => {
+            el.removeEventListener("pointermove", onMove);
+            el.removeEventListener("pointerleave", onLeave);
+          };
+        }
+      );
+
+      return () => {
+        window.removeEventListener("load", refresh);
+        mm.revert();
+      };
+    },
+    { scope: root }
+  );
+
   return (
-    <section className="surface-dark pt-[72px]" id="hero">
-      {/* Photo + copy */}
-      <div className="relative isolate overflow-hidden">
-        {/* Photo: bottom band on phones, right ~64% on desktop */}
-        <div className="absolute inset-x-0 bottom-0 h-[260px] lg:inset-y-0 lg:left-auto lg:right-0 lg:h-auto lg:w-[64%] -z-20">
-          <Image
-            src="/hero-salon.jpg"
-            alt="Styling stations with black chairs and mirrors against a blue wall at V My Fair salon"
-            fill
-            priority
-            sizes="(min-width: 1024px) 64vw, 100vw"
-            className="object-cover object-[50%_60%] lg:object-[60%_55%]"
-          />
+    <section ref={root} className="hero-v2" id="hero" aria-labelledby="hero-title">
+      <div className="hero-spill" aria-hidden="true" />
+
+      <div className="hero-wrap hero-grid">
+        <div className="hero-copy">
+          <h1 ref={titleRef} id="hero-title" className="hero-title-v2">
+            <span className="block">More than</span>
+            <span className="block">a salon.</span>
+          </h1>
+          <p className="hero-tag">It&apos;s a better you.</p>
+          <p className="hero-lede">
+            Haircuts, color, skin, grooming, nails and bridal makeup under one roof, plus hands-on
+            training for new stylists on request.
+          </p>
+
+          <div className="hero-cta">
+            <Link href="/contact" className="hbtn hbtn-primary" id="hero-book-btn">
+              Book appointment
+            </Link>
+            <Link href="/gallery" className="hbtn hbtn-ghost" id="hero-tour-btn">
+              Take a tour
+            </Link>
+          </div>
+
+          <dl className="hero-facts">
+            <div>
+              <dt>
+                4.5
+                <svg className="hero-star" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true">
+                  <path
+                    d="M10 1.5l2.5 5.6 6.1.6-4.6 4.1 1.3 6L10 14.8l-5.3 3 1.3-6L1.4 7.7l6.1-.6z"
+                    fill="currentColor"
+                  />
+                </svg>
+                <span className="sr-only"> stars</span>
+              </dt>
+              <dd>500+ Google reviews</dd>
+            </div>
+            <div>
+              <dt>Since 2016</dt>
+              <dd>Chanda Nagar, Hyderabad</dd>
+            </div>
+            <div>
+              <dt>Open daily</dt>
+              <dd>7:30 am to 9:30 pm</dd>
+            </div>
+          </dl>
         </div>
-        <div className="hero-scrim absolute inset-0 -z-10" aria-hidden="true" />
 
-        <div className="container flex items-start lg:min-h-[640px] lg:items-center">
-          <div className="max-w-[36rem] pt-14 pb-[300px] lg:py-24">
-            <p className="eyebrow">Look good · Feel great</p>
+        <div className="hero-stage">
+          <div className="hero-layer layer-a">
+            <div className="pw-a">
+              <figure className="hero-mirror hero-mirror-a">
+                <div className="hero-glass">
+                  <Image
+                    src="/images/hero/mirror-a.jpg"
+                    width={816}
+                    height={1020}
+                    loading="eager"
+                    fetchPriority="high"
+                    sizes="(min-width: 980px) 22vw, (min-width: 640px) 330px, 56vw"
+                    alt="Two styling stations with black chairs and wall mirrors at V My Fair, with a client in a pink cape"
+                  />
+                  <span className="hero-gloss" aria-hidden="true">
+                    <span className="hero-glint" />
+                  </span>
+                </div>
+              </figure>
+            </div>
+          </div>
 
-            <h1 className="hero-title mb-6">
-              Your Style
-              <span className="block italic font-medium">Our Expertise</span>
-            </h1>
-
-            <p className="lead mb-10">
-              Professional hair, beauty and grooming services in a comfortable, modern space.
-            </p>
-
-            <div className="flex flex-wrap items-center gap-4">
-              <Link href="/contact" className="btn btn-gold btn-lg" id="hero-book-btn">
-                Book Appointment
-              </Link>
-              <Link href="/gallery" className="btn btn-secondary btn-lg" id="hero-tour-btn">
-                <PlayIcon size={14} />
-                Take a Tour
-              </Link>
+          <div className="hero-layer layer-b">
+            <div className="pw-b">
+              <figure className="hero-mirror hero-mirror-b">
+                <div className="hero-glass">
+                  <Image
+                    src="/images/hero/mirror-b.jpg"
+                    width={1180}
+                    height={886}
+                    loading="eager"
+                    sizes="(min-width: 980px) 24vw, (min-width: 640px) 340px, 58vw"
+                    alt="Styling stations under warm ceiling lights with blue and teal walls at V My Fair"
+                  />
+                  <span className="hero-gloss" aria-hidden="true">
+                    <span className="hero-glint" />
+                  </span>
+                </div>
+              </figure>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Service bar: sits below the photo, never on top of it */}
-      <div className="surface-raised border-t border-[var(--line-on-dark)]">
-        <div className="container flex flex-col gap-6 py-6 lg:flex-row lg:items-center lg:justify-between lg:py-7">
-          <p className="font-serif text-[1.125rem] italic">
-            More than a salon · it&apos;s a better you
-          </p>
-          <ul className="grid grid-cols-2 gap-x-8 gap-y-5 sm:grid-cols-4 lg:gap-x-12">
-            {heroIcons.map(({ Icon, label }) => (
-              <li key={label} className="flex items-center gap-3">
-                <span className="flex h-11 w-11 flex-none items-center justify-center rounded-full border border-[var(--line-on-dark)] text-accent-icon">
-                  <Icon size={20} strokeWidth={1.4} />
-                </span>
-                <span className="text-small font-medium text-fg">{label}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
+      <div className="hero-dim" aria-hidden="true" />
     </section>
   );
 }
