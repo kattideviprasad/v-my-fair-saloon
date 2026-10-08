@@ -78,7 +78,7 @@ export function AboutContent() {
             <ScrollReveal>
               <h2 className="mb-6">
                 From a Small Salon to a
-                <span className="block italic font-medium">Community Institution</span>
+                <span className="accent block">Community Institution</span>
               </h2>
               <div className="max-w-[60ch] space-y-4">
                 <p>

@@ -161,7 +161,7 @@ export default function HomePage() {
               <span className="eyebrow">Our story</span>
               <h2 className="mb-6">
                 A Neighborhood Institution
-                <span className="block italic font-medium">Since 2016</span>
+                <span className="accent block">Since 2016</span>
               </h2>
               <div className="mb-8 max-w-[60ch] space-y-4">
                 <p>

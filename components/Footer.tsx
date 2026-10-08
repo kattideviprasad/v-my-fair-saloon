@@ -44,7 +44,7 @@ export function Footer() {
             <p className="text-small mb-5">
               Professional hair, beauty, and grooming services in a comfortable, modern space. Serving Hyderabad since 2016.
             </p>
-            <p className="font-serif text-[1.0625rem] italic text-accent-text">
+            <p className="accent text-[1.0625rem]">
               More than a salon · it&apos;s a better you
             </p>
           </div>
