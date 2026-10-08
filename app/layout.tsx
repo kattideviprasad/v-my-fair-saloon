@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Inter, Instrument_Serif, Hanken_Grotesk } from "next/font/google";
+import { Playfair_Display, Inter } from "next/font/google";
 import "./globals.css";
 import "./hero.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { zodiak, zodiakItalic, generalSans } from "@/lib/fonts";
 
 /* Playfair and Inter are only needed below the hero, so they are not preloaded:
    preloading them made six font files compete with the hero photo (the LCP element) */
@@ -22,21 +23,6 @@ const inter = Inter({
   display: "swap",
   preload: false,
   weight: ["300", "400", "500", "600", "700"],
-});
-
-/* Hero and header only, for now */
-const instrument = Instrument_Serif({
-  variable: "--font-instrument",
-  subsets: ["latin"],
-  display: "swap",
-  weight: "400",
-  style: ["normal", "italic"],
-});
-
-const hanken = Hanken_Grotesk({
-  variable: "--font-hanken",
-  subsets: ["latin"],
-  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -65,7 +51,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       data-scroll-behavior="smooth"
-      className={`${playfair.variable} ${inter.variable} ${instrument.variable} ${hanken.variable}`}
+      className={`${playfair.variable} ${inter.variable} ${zodiak.variable} ${zodiakItalic.variable} ${generalSans.variable}`}
     >
       <body>
         <Navbar />

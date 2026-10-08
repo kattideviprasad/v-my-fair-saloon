@@ -15,7 +15,7 @@
     height: var(--bar-h);
     background: var(--soffit);
     color: var(--paper);
-    font-family: var(--font-body-hero);
+    font-family: var(--font-body);
   }
 
   .site-header :focus-visible,
@@ -68,7 +68,7 @@
   }
 
   .sh-wordmark b {
-    font: 400 1.7rem/1 var(--font-display-hero);
+    font: 500 1.65rem/1 var(--font-display);
     letter-spacing: -0.01em;
   }
 
@@ -128,7 +128,8 @@
     display: none;
     align-items: center;
     min-height: 44px;
-    font-size: 0.95rem;
+    font-size: 0.9375rem;
+    font-weight: 500;
     white-space: nowrap;
     color: color-mix(in srgb, var(--paper) 88%, transparent);
   }
@@ -229,7 +230,7 @@
     padding: 8px var(--hero-gutter) 28px;
     background: var(--soffit);
     color: var(--paper);
-    font-family: var(--font-body-hero);
+    font-family: var(--font-body);
     border-top: 1px solid color-mix(in srgb, var(--paper) 14%, transparent);
     visibility: hidden;
     opacity: 0;
@@ -248,7 +249,7 @@
     display: flex;
     align-items: center;
     min-height: 56px;
-    font: 400 1.9rem/1 var(--font-display-hero);
+    font: 500 1.9rem/1 var(--font-display);
     border-bottom: 1px solid color-mix(in srgb, var(--paper) 14%, transparent);
   }
 
@@ -289,7 +290,7 @@
     display: flex;
     align-items: center;
     color: var(--paper);
-    font-family: var(--font-body-hero);
+    font-family: var(--font-body);
     padding-top: calc(var(--bar-h) + clamp(28px, 6vw, 92px));
     padding-bottom: clamp(48px, 7vw, 112px);
     /* Stacked layout: the glow sits behind the photos at the bottom, so the copy above it
@@ -357,31 +358,52 @@
     gap: clamp(28px, 4vw, 64px);
   }
 
-  .hero-title-v2 {
-    margin: 0;
-    color: var(--paper);
-    font: 400 clamp(3.5rem, 9.4vw, 9.5rem) / 0.93 var(--font-display-hero);
-    letter-spacing: -0.025em;
-    text-wrap: initial;
+  .hero-eyebrow {
+    margin: 0 0 clamp(14px, 2vw, 22px);
+    font: 500 var(--fs-eyebrow) / 1.4 var(--font-body);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--led-hi);
   }
 
-  /* SplitText line masks: keep descenders from being clipped without moving layout */
+  .hero-title-v2 {
+    max-width: 15ch;
+    margin: 0;
+    padding-bottom: 0.16em;
+    color: var(--paper);
+    font: 500 clamp(2.4rem, 1rem + 6.2vw, 5.75rem) / 1.04 var(--font-display);
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
+  /* The one accent word */
+  .hero-accent {
+    font-family: var(--font-display-italic);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--led-hi);
+  }
+
+  /* SplitText line masks: room for descenders and the italic's overhang. The bottom padding is
+     cancelled by the negative margin, and the h1's own bottom padding stands in for the last
+     line's, so the headline is exactly as tall before and after the split (no layout shift) */
   .hero-line-mask {
-    padding-bottom: 0.08em;
-    margin-bottom: -0.08em;
+    padding: 0 0.14em 0.16em;
+    margin: 0 -0.14em -0.16em;
   }
 
   .hero-tag {
     margin: clamp(10px, 1.6vw, 22px) 0 0;
-    font: italic 400 clamp(1.6rem, 2.7vw, 2.5rem) / 1.1 var(--font-display-hero);
+    font: italic 400 clamp(1.6rem, 2.7vw, 2.5rem) / 1.1 var(--font-display-italic);
     color: var(--led-hi);
   }
 
   .hero-lede {
-    max-width: 34rem;
+    max-width: 38ch;
     margin: 16px 0 0;
-    font-size: clamp(1.0625rem, 1rem + 0.2vw, 1.125rem);
-    line-height: 1.55;
+    font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
+    font-weight: 400;
+    line-height: 1.6;
     color: color-mix(in srgb, var(--paper) 94%, transparent);
   }
 
@@ -396,12 +418,12 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 52px;
+    min-height: 48px;
     padding: 0 22px;
     border: 1.5px solid transparent;
     border-radius: 999px;
     white-space: nowrap;
-    font: 600 1rem/1 var(--font-body-hero);
+    font: 600 1rem/1 var(--font-body);
     transition: background-color 0.25s, box-shadow 0.25s, translate 0.25s, border-color 0.25s;
   }
 
@@ -440,10 +462,17 @@
   .hero-facts {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: auto auto;
+    align-items: start;
     margin: clamp(26px, 4vw, 52px) 0 0;
   }
 
+  /* Value row and label row are shared by the three columns (subgrid), so the values'
+     baselines line up and so do the labels, even when a value wraps to two lines */
   .hero-facts > div {
+    display: grid;
+    grid-row: span 2;
+    grid-template-rows: subgrid;
     min-width: 0;
   }
 
@@ -456,12 +485,15 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    font: 400 clamp(1.35rem, 2.2vw, 2.1rem) / 1.05 var(--font-display-hero);
+    font: 500 clamp(1.5rem, 1.2rem + 1.2vw, 2rem) / 1.1 var(--font-display);
+    font-variant-numeric: lining-nums;
   }
 
   .hero-facts dd {
     margin: 5px 0 0;
-    font-size: 0.8125rem;
+    font-size: var(--fs-eyebrow);
+    font-weight: 500;
+    letter-spacing: 0.04em;
     line-height: 1.4;
     color: color-mix(in srgb, var(--paper) 92%, transparent);
   }
@@ -565,8 +597,10 @@
       grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
     }
 
+    /* Two columns: the copy column is half the width, so cap the size to keep three lines
+       ("Chanda Nagar’s" is 7.85em wide; the column is at least 410px) */
     .hero-title-v2 {
-      font-size: clamp(5rem, 9.4vw, 9.5rem);
+      font-size: clamp(3rem, 1.1rem + 3.4vw, 4.2rem);
     }
 
     .hero-cta {
@@ -579,10 +613,6 @@
 
     .hero-facts > div + div {
       padding-left: 20px;
-    }
-
-    .hero-facts dd {
-      font-size: 0.875rem;
     }
 
     .hbtn {

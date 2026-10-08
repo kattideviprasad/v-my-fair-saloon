@@ -55,6 +55,7 @@ export function HeroSection() {
       /* ── Everything that moves, only when motion is welcome ── */
       mm.add("(prefers-reduced-motion: no-preference)", (_ctx, safe) => {
         if (!safe) return; // contextSafe is always passed by matchMedia; narrows the type
+        let cancelled = false; // set on cleanup so a late font promise cannot start the split
 
         // Gentle scroll drift: the mirrors move at different speeds as the hero scrolls away
         const drift = { trigger: el, start: "top top", end: "bottom top", scrub: true };
@@ -80,7 +81,7 @@ export function HeroSection() {
         if (shouldPlayIntro()) {
           const dim = q(".hero-dim");
           const spill = q(".hero-spill");
-          const copy = q(".hero-tag, .hero-lede");
+          const copy = q(".hero-eyebrow, .hero-tag, .hero-lede");
           const buttons = q(".hero-cta .hbtn");
           const facts = q(".hero-facts > div");
           const frames = q(".hero-mirror");
@@ -96,24 +97,41 @@ export function HeroSection() {
           gsap.set(glints, { skewX: -16 });
           gsap.set(title, { autoAlpha: 0 }); // revealed by the split below
 
-          // Headline: each line rises out of its own mask. autoSplit re-splits after
-          // fonts load or a resize; returning the tween keeps it in sync when that happens.
-          SplitText.create(title, {
-            type: "lines",
-            mask: "lines",
-            linesClass: "hero-line",
-            autoSplit: true,
-            onSplit(self) {
-              gsap.set(title, { autoAlpha: 1 });
-              return gsap.from(self.lines, {
-                yPercent: 115,
-                duration: 0.95,
-                stagger: 0.09,
-                ease: "power3.out",
-                delay: 0.5,
-              });
-            },
-          });
+          // Headline: each line rises out of its own mask. The first split waits for the fonts
+          // (the title stays hidden until then, so wrong line breaks are never seen); autoSplit
+          // re-splits on resize or a late font swap, and returning the tween keeps it in sync.
+          const splitTitle = safe(() => {
+            if (cancelled) return;
+            SplitText.create(title, {
+              type: "lines",
+              mask: "lines",
+              linesClass: "hero-line",
+              autoSplit: true,
+              onSplit(self) {
+                gsap.set(title, { autoAlpha: 1 });
+                return gsap.from(self.lines, {
+                  yPercent: 115,
+                  duration: 0.95,
+                  stagger: 0.09,
+                  ease: "power3.out",
+                  delay: 0.5,
+                });
+              },
+            });
+          }) as () => void;
+
+          if (document.fonts) {
+            // Ask for exactly the faces the headline uses (Medium, plus the italic accent), then
+            // wait for every pending font
+            const family = getComputedStyle(title).fontFamily;
+            Promise.all([
+              document.fonts.load(`500 1em ${family}`),
+              document.fonts.load(`italic 400 1em ${family}`),
+              document.fonts.ready,
+            ]).then(splitTitle, splitTitle);
+          } else {
+            splitTitle();
+          }
 
           const settle = () => {
             gsap.set([title, ...copy, ...buttons, ...facts, ...frames, ...spill, ...dim], {
@@ -149,6 +167,7 @@ export function HeroSection() {
         }
 
         return () => {
+          cancelled = true;
           mirrors.forEach((m) => m.removeEventListener("pointerenter", onEnter));
         };
       });
@@ -205,9 +224,11 @@ export function HeroSection() {
 
       <div className="hero-wrap hero-grid">
         <div className="hero-copy">
+          <p className="hero-eyebrow">V My Fair · Unisex Salon &amp; Academy</p>
           <h1 ref={titleRef} id="hero-title" className="hero-title-v2">
-            <span className="block">More than</span>
-            <span className="block">a salon.</span>
+            {/* nowrap keeps "&" at the end of line two (SplitText breaks on a non-breaking space) */}
+            Chanda Nagar&rsquo;s unisex <span className="whitespace-nowrap">salon &amp;</span>{" "}
+            <em className="hero-accent">academy.</em>
           </h1>
           <p className="hero-tag">It&apos;s a better you.</p>
           <p className="hero-lede">
@@ -219,8 +240,8 @@ export function HeroSection() {
             <Link href="/contact" className="hbtn hbtn-primary" id="hero-book-btn">
               Book appointment
             </Link>
-            <Link href="/gallery" className="hbtn hbtn-ghost" id="hero-tour-btn">
-              Take a tour
+            <Link href="/services" className="hbtn hbtn-ghost" id="hero-services-btn">
+              View services
             </Link>
           </div>
 

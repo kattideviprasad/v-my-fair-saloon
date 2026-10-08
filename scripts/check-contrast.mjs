@@ -75,7 +75,7 @@ const pairs = [
   ["paper", "wall", 4.5, "headline and ghost button on the wall"],
   ["paper", "wall", 4.5, "lede, 94% paper, on the wall", 0.94],
   ["paper", "wall", 4.5, "fact captions, 92% paper, on the wall", 0.92],
-  ["led-hi", "wall", 4.5, "tagline on the wall"],
+  ["led-hi", "wall", 4.5, "eyebrow, tagline and the italic headline word on the wall"],
   ["led", "wall", 3, "star icon on the wall"],
 ];
 
